@@ -17,9 +17,11 @@ interface SlotCardProps {
   onEdit?: (slot: TimeSlot) => void;
   onDelete?: (slotId: bigint) => void;
   onCancel?: (slotId: bigint) => void;
+  onCancelAsHost?: (slotId: bigint) => void;
   isBooking?: boolean;
   isDeleting?: boolean;
   isCancelling?: boolean;
+  isCancellingAsHost?: boolean;
   showManageButtons?: boolean;
   showCancelButton?: boolean;
   index?: number;
@@ -66,9 +68,11 @@ export function SlotCard({
   onEdit,
   onDelete,
   onCancel,
+  onCancelAsHost,
   isBooking = false,
   isDeleting = false,
   isCancelling = false,
+  isCancellingAsHost = false,
   showManageButtons = false,
   showCancelButton = false,
   index = 0,
@@ -169,9 +173,10 @@ export function SlotCard({
 
       {/* Footer CTA */}
       <div className="px-4 pb-4 pt-1">
+        {/* Booker cancels their own booking */}
         {showCancelButton && !isAvailable ? (
           <Button
-            data-ocid={`slot.delete_button.${index + 1}`}
+            data-ocid={`slot.cancel_button.${index + 1}`}
             size="sm"
             variant="outline"
             className="w-full gap-1.5 border-destructive/50 text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -186,9 +191,9 @@ export function SlotCard({
             {isCancelling ? "Cancelling..." : "Cancel Booking"}
           </Button>
         ) : showManageButtons ? (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
             {isAvailable && (
-              <>
+              <div className="flex gap-2">
                 <Button
                   data-ocid={`slot.edit_button.${index + 1}`}
                   size="sm"
@@ -214,12 +219,24 @@ export function SlotCard({
                   )}
                   Delete
                 </Button>
-              </>
+              </div>
             )}
             {!isAvailable && (
-              <div className="flex-1 text-center text-xs text-muted-foreground py-1.5 border border-border rounded-md">
-                Booked — cannot edit
-              </div>
+              <Button
+                data-ocid={`slot.cancel_as_host_button.${index + 1}`}
+                size="sm"
+                variant="outline"
+                className="w-full gap-1.5 border-destructive/50 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => onCancelAsHost?.(slot.id)}
+                disabled={isCancellingAsHost}
+              >
+                {isCancellingAsHost ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <XCircle className="h-3.5 w-3.5" />
+                )}
+                {isCancellingAsHost ? "Cancelling..." : "Cancel Booking"}
+              </Button>
             )}
           </div>
         ) : (

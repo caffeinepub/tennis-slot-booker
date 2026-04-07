@@ -69,6 +69,7 @@ actor {
     };
   };
 
+  // Cancel booking by the person who booked the slot
   public shared ({ caller }) func cancelBooking(slotId : Nat, bookerUsername : Text) : async () {
     switch (timeSlots.get(slotId)) {
       case (null) { Runtime.trap("Time slot does not exist") };
@@ -83,6 +84,27 @@ actor {
               Runtime.trap("Only the booker can cancel this booking");
             };
           };
+        };
+        let updatedSlot : TimeSlot = {
+          slot with
+          status = "available";
+          bookerUsername = null;
+        };
+        timeSlots.add(slotId, updatedSlot);
+      };
+    };
+  };
+
+  // Cancel booking by the host of the slot
+  public shared ({ caller }) func cancelSlotAsHost(slotId : Nat, hostUsername : Text) : async () {
+    switch (timeSlots.get(slotId)) {
+      case (null) { Runtime.trap("Time slot does not exist") };
+      case (?slot) {
+        if (slot.hostUsername != hostUsername) {
+          Runtime.trap("Only the host can cancel this slot");
+        };
+        if (slot.status != "booked") {
+          Runtime.trap("Slot is not booked");
         };
         let updatedSlot : TimeSlot = {
           slot with

@@ -103,11 +103,15 @@ export interface TimeSlot {
 }
 export interface backendInterface {
     bookSlot(slotId: bigint, bookerUsername: string): Promise<void>;
+    cancelBooking(slotId: bigint, bookerUsername: string): Promise<void>;
+    cancelSlotAsHost(slotId: bigint, hostUsername: string): Promise<void>;
     createTimeSlot(slot: TimeSlot): Promise<bigint>;
     deleteTimeSlot(slotId: bigint, hostUsername: string): Promise<void>;
     editTimeSlot(slotId: bigint, hostUsername: string, updatedSlot: TimeSlot): Promise<void>;
     getAllTimeSlots(): Promise<Array<TimeSlot>>;
     getSlotsByUsername(username: string): Promise<Array<TimeSlot>>;
+    getProfileComment(username: string): Promise<string | undefined>;
+    setProfileComment(username: string, comment: string): Promise<void>;
 }
 import type { TimeSlot as _TimeSlot } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -123,6 +127,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.bookSlot(arg0, arg1);
+            return result;
+        }
+    }
+    async cancelBooking(arg0: bigint, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.cancelBooking(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.cancelBooking(arg0, arg1);
+            return result;
+        }
+    }
+    async cancelSlotAsHost(arg0: bigint, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.cancelSlotAsHost(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.cancelSlotAsHost(arg0, arg1);
             return result;
         }
     }
@@ -194,6 +226,34 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getSlotsByUsername(arg0);
             return from_candid_vec_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProfileComment(arg0: string): Promise<string | undefined> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProfileComment(arg0);
+                return result.length === 0 ? undefined : result[0];
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProfileComment(arg0);
+            return result.length === 0 ? undefined : result[0];
+        }
+    }
+    async setProfileComment(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setProfileComment(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setProfileComment(arg0, arg1);
+            return result;
         }
     }
 }

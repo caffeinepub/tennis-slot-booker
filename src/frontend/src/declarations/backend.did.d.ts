@@ -24,11 +24,15 @@ export interface TimeSlot {
 }
 export interface _SERVICE {
   'bookSlot' : ActorMethod<[bigint, string], undefined>,
+  'cancelBooking' : ActorMethod<[bigint, string], undefined>,
+  'cancelSlotAsHost' : ActorMethod<[bigint, string], undefined>,
   'createTimeSlot' : ActorMethod<[TimeSlot], bigint>,
   'deleteTimeSlot' : ActorMethod<[bigint, string], undefined>,
   'editTimeSlot' : ActorMethod<[bigint, string, TimeSlot], undefined>,
   'getAllTimeSlots' : ActorMethod<[], Array<TimeSlot>>,
   'getSlotsByUsername' : ActorMethod<[string], Array<TimeSlot>>,
+  'getProfileComment' : ActorMethod<[string], [] | [string]>,
+  'setProfileComment' : ActorMethod<[string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

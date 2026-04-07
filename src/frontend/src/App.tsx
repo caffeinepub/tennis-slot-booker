@@ -20,6 +20,7 @@ import { SlotCard } from "./components/SlotCard";
 import {
   useBookSlot,
   useCancelBooking,
+  useCancelSlotAsHost,
   useDeleteTimeSlot,
   useGetAllTimeSlots,
   useGetProfileComment,
@@ -123,6 +124,7 @@ export default function App() {
   const [deletingId, setDeletingId] = useState<bigint | null>(null);
   const [bookingId, setBookingId] = useState<bigint | null>(null);
   const [cancellingId, setCancellingId] = useState<bigint | null>(null);
+  const [cancellingHostId, setCancellingHostId] = useState<bigint | null>(null);
 
   const { data: allSlots = [], isLoading: isLoadingAll } = useGetAllTimeSlots();
   const { data: mySlots = [], isLoading: isLoadingMine } =
@@ -131,6 +133,7 @@ export default function App() {
 
   const bookMutation = useBookSlot();
   const cancelMutation = useCancelBooking();
+  const cancelHostMutation = useCancelSlotAsHost();
   const deleteMutation = useDeleteTimeSlot();
   const setCommentMutation = useSetProfileComment();
 
@@ -194,6 +197,20 @@ export default function App() {
       toast.error("Failed to cancel booking. Please try again.");
     } finally {
       setCancellingId(null);
+    }
+  };
+
+  const handleCancelAsHost = async (slotId: bigint) => {
+    if (!confirm("Cancel this booking? The slot will become available again."))
+      return;
+    setCancellingHostId(slotId);
+    try {
+      await cancelHostMutation.mutateAsync({ slotId, hostUsername: username });
+      toast.success("Booking cancelled. Slot is now available again.");
+    } catch {
+      toast.error("Failed to cancel booking. Please try again.");
+    } finally {
+      setCancellingHostId(null);
     }
   };
 
@@ -428,7 +445,9 @@ export default function App() {
             <p className="text-sm text-muted-foreground mb-6">
               {isSampleData
                 ? "Showing sample slots — be the first to post a real one!"
-                : `${filteredSlots.length} slot${filteredSlots.length !== 1 ? "s" : ""} found`}
+                : `${filteredSlots.length} slot${
+                    filteredSlots.length !== 1 ? "s" : ""
+                  } found`}
             </p>
 
             {/* Filter row */}
@@ -623,7 +642,9 @@ export default function App() {
                           currentUsername={username}
                           onEdit={setEditingSlot}
                           onDelete={handleDelete}
+                          onCancelAsHost={handleCancelAsHost}
                           isDeleting={deletingId === slot.id}
+                          isCancellingAsHost={cancellingHostId === slot.id}
                           showManageButtons
                           index={i}
                         />

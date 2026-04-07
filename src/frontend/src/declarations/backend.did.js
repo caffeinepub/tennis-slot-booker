@@ -23,11 +23,15 @@ export const TimeSlot = IDL.Record({
 
 export const idlService = IDL.Service({
   'bookSlot' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'cancelBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'cancelSlotAsHost' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'createTimeSlot' : IDL.Func([TimeSlot], [IDL.Nat], []),
   'deleteTimeSlot' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'editTimeSlot' : IDL.Func([IDL.Nat, IDL.Text, TimeSlot], [], []),
   'getAllTimeSlots' : IDL.Func([], [IDL.Vec(TimeSlot)], ['query']),
   'getSlotsByUsername' : IDL.Func([IDL.Text], [IDL.Vec(TimeSlot)], ['query']),
+  'getProfileComment' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Text)], ['query']),
+  'setProfileComment' : IDL.Func([IDL.Text, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
@@ -48,11 +52,15 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     'bookSlot' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'cancelBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'cancelSlotAsHost' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'createTimeSlot' : IDL.Func([TimeSlot], [IDL.Nat], []),
     'deleteTimeSlot' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'editTimeSlot' : IDL.Func([IDL.Nat, IDL.Text, TimeSlot], [], []),
     'getAllTimeSlots' : IDL.Func([], [IDL.Vec(TimeSlot)], ['query']),
     'getSlotsByUsername' : IDL.Func([IDL.Text], [IDL.Vec(TimeSlot)], ['query']),
+    'getProfileComment' : IDL.Func([IDL.Text], [IDL.Opt(IDL.Text)], ['query']),
+    'setProfileComment' : IDL.Func([IDL.Text, IDL.Text], [], []),
   });
 };
 

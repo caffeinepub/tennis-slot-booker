@@ -22,6 +22,7 @@ export interface TimeSlot {
 export interface backendInterface {
     bookSlot(slotId: bigint, bookerUsername: string): Promise<void>;
     cancelBooking(slotId: bigint, bookerUsername: string): Promise<void>;
+    cancelSlotAsHost(slotId: bigint, hostUsername: string): Promise<void>;
     createTimeSlot(slot: TimeSlot): Promise<bigint>;
     deleteTimeSlot(slotId: bigint, hostUsername: string): Promise<void>;
     editTimeSlot(slotId: bigint, hostUsername: string, updatedSlot: TimeSlot): Promise<void>;

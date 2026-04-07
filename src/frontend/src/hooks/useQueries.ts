@@ -68,8 +68,25 @@ export function useCancelBooking() {
       bookerUsername,
     }: { slotId: bigint; bookerUsername: string }) => {
       if (!actor) throw new Error("Actor not available");
-      // cancelBooking is a new backend method not yet reflected in generated types
-      return (actor as any).cancelBooking(slotId, bookerUsername);
+      return actor.cancelBooking(slotId, bookerUsername);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["timeSlots"] });
+      queryClient.invalidateQueries({ queryKey: ["slotsByUsername"] });
+    },
+  });
+}
+
+export function useCancelSlotAsHost() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      slotId,
+      hostUsername,
+    }: { slotId: bigint; hostUsername: string }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.cancelSlotAsHost(slotId, hostUsername);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["timeSlots"] });
@@ -125,10 +142,7 @@ export function useGetProfileComment(username: string) {
     queryKey: ["profileComment", username],
     queryFn: async () => {
       if (!actor || !username) return undefined;
-      // getProfileComment is a new backend method not yet reflected in generated types
-      return (actor as any).getProfileComment(username) as Promise<
-        string | undefined
-      >;
+      return actor.getProfileComment(username);
     },
     enabled: !!actor && !isFetching && !!username,
   });
@@ -143,8 +157,7 @@ export function useSetProfileComment() {
       comment,
     }: { username: string; comment: string }) => {
       if (!actor) throw new Error("Actor not available");
-      // setProfileComment is a new backend method not yet reflected in generated types
-      return (actor as any).setProfileComment(username, comment);
+      return actor.setProfileComment(username, comment);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
